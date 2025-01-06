@@ -1,11 +1,11 @@
 import React from "react";
-import './model.css';
+import "./model.css";
 
 interface ModelProps {
   isOpen: boolean;
   onClose: () => void;
   onSubmit: (data: { name: string; brand: string; model: string; year: number }) => void;
-  refreshTable: () => void; // New prop for refreshing the table
+  refreshTable: () => void; // Refresh table data after submission
 }
 
 const Model: React.FC<ModelProps> = ({ isOpen, onClose, onSubmit, refreshTable }) => {
@@ -18,7 +18,6 @@ const Model: React.FC<ModelProps> = ({ isOpen, onClose, onSubmit, refreshTable }
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
-
     setFormData((prev) => ({
       ...prev,
       [name]: name === "year" ? parseInt(value, 10) || 0 : value,
@@ -27,114 +26,126 @@ const Model: React.FC<ModelProps> = ({ isOpen, onClose, onSubmit, refreshTable }
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-
-    // Ensure all fields are valid before submitting
     if (formData.name && formData.brand && formData.model && formData.year) {
       try {
         const response = await fetch("/api/add", {
           method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
+          headers: { "Content-Type": "application/json" },
           body: JSON.stringify(formData),
         });
 
         if (response.ok) {
           const data = await response.json();
-          console.log("Data successfully sent to the backend:", data);
           alert("Data submitted successfully!");
           onClose();
-          refreshTable(); // Refresh the table after successful submission
-          setFormData({
-            name: "",
-            brand: "",
-            model: "",
-            year: 0,
-          });
+          refreshTable();
+          setFormData({ name: "", brand: "", model: "", year: 0 });
         } else {
           const error = await response.json();
-          console.error("Error from server:", error);
-          alert("Failed to submit data. Please try again.");
+          alert(`Submission failed: ${error.message}`);
         }
       } catch (error) {
-        console.error("Network error:", error);
-        alert("An error occurred while submitting the data. Please try again.");
+        alert(`Error: ${error}`);
       }
     } else {
-      alert("Please fill out all fields before submitting!");
+      alert("Please fill out all fields before submitting.");
     }
   };
 
   if (!isOpen) return null;
 
   return (
-    <div className="absolute inset-0 bg-gray-900 bg-opacity-50 flex justify-center items-center">
-      <div className="bg-white rounded-lg p-6 w-1/3">
-        <h2 className="text-xl font-bold mb-4">Enter Details</h2>
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
+      <div className="bg-white dark:bg-gray-800 rounded-lg shadow-lg w-11/12 sm:w-1/2 lg:w-1/3 p-6">
+        <h2 className="text-2xl font-bold mb-4 text-gray-800 dark:text-gray-200">
+          Add New Details
+        </h2>
         <form onSubmit={handleSubmit}>
-          <div className="mb-4">
-            <label htmlFor="name" className="block text-sm font-medium mb-1">Name</label>
-            <input
-              type="text"
-              id="name"
-              name="name"
-              placeholder="Enter the name"
-              value={formData.name}
-              onChange={handleChange}
-              className="w-full border border-gray-300 rounded-md p-2"
-              required
-            />
+          <div className="space-y-4">
+            <div>
+              <label
+                htmlFor="name"
+                className="block text-sm font-medium text-gray-700 dark:text-gray-300"
+              >
+                Name
+              </label>
+              <input
+                type="text"
+                id="name"
+                name="name"
+                value={formData.name}
+                onChange={handleChange}
+                className="w-full border border-gray-300 dark:border-gray-600 rounded-lg p-2 focus:ring-blue-500 focus:border-blue-500"
+                placeholder="Enter the name"
+                required
+              />
+            </div>
+            <div>
+              <label
+                htmlFor="brand"
+                className="block text-sm font-medium text-gray-700 dark:text-gray-300"
+              >
+                Brand
+              </label>
+              <input
+                type="text"
+                id="brand"
+                name="brand"
+                value={formData.brand}
+                onChange={handleChange}
+                className="w-full border border-gray-300 dark:border-gray-600 rounded-lg p-2 focus:ring-blue-500 focus:border-blue-500"
+                placeholder="Enter the brand"
+                required
+              />
+            </div>
+            <div>
+              <label
+                htmlFor="model"
+                className="block text-sm font-medium text-gray-700 dark:text-gray-300"
+              >
+                Model
+              </label>
+              <input
+                type="text"
+                id="model"
+                name="model"
+                value={formData.model}
+                onChange={handleChange}
+                className="w-full border border-gray-300 dark:border-gray-600 rounded-lg p-2 focus:ring-blue-500 focus:border-blue-500"
+                placeholder="Enter the model"
+                required
+              />
+            </div>
+            <div>
+              <label
+                htmlFor="year"
+                className="block text-sm font-medium text-gray-700 dark:text-gray-300"
+              >
+                Year
+              </label>
+              <input
+                type="number"
+                id="year"
+                name="year"
+                value={formData.year || ""}
+                onChange={handleChange}
+                className="w-full border border-gray-300 dark:border-gray-600 rounded-lg p-2 focus:ring-blue-500 focus:border-blue-500"
+                placeholder="Enter the year"
+                required
+              />
+            </div>
           </div>
-          <div className="mb-4">
-            <label htmlFor="brand" className="block text-sm font-medium mb-1">Brand</label>
-            <input
-              type="text"
-              id="brand"
-              name="brand"
-              placeholder="Enter the brand"
-              value={formData.brand}
-              onChange={handleChange}
-              className="w-full border border-gray-300 rounded-md p-2"
-              required
-            />
-          </div>
-          <div className="mb-4">
-            <label htmlFor="model" className="block text-sm font-medium mb-1">Model</label>
-            <input
-              type="text"
-              id="model"
-              name="model"
-              placeholder="Enter the model"
-              value={formData.model}
-              onChange={handleChange}
-              className="w-full border border-gray-300 rounded-md p-2"
-              required
-            />
-          </div>
-          <div className="mb-4">
-            <label htmlFor="year" className="block text-sm font-medium mb-1">Year</label>
-            <input
-              type="number"
-              id="year"
-              name="year"
-              placeholder="Enter the year"
-              value={formData.year || ""}
-              onChange={handleChange}
-              className="w-full border border-gray-300 rounded-md p-2"
-              required
-            />
-          </div>
-          <div className="flex justify-end">
+          <div className="flex justify-end space-x-3 mt-6">
             <button
               type="button"
               onClick={onClose}
-              className="mr-2 px-4 py-2 text-sm bg-gray-200 rounded-md"
+              className="px-4 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300"
             >
               Cancel
             </button>
             <button
               type="submit"
-              className="px-4 py-2 text-sm bg-blue-500 text-white rounded-md"
+              className="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600"
             >
               Submit
             </button>
@@ -146,5 +157,3 @@ const Model: React.FC<ModelProps> = ({ isOpen, onClose, onSubmit, refreshTable }
 };
 
 export default Model;
-
-

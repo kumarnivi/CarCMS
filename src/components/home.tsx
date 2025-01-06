@@ -3,7 +3,10 @@ import axios from "axios";
 import Button from "./button";
 import Model from "./model";
 import EditModel from "./editModel";
-
+import DeleteModel from "./deleteModel"; // Import the DeleteModel component
+import edit from '../assets/edit.png';
+import trash from '../assets/trash.png'; // Assume you have a delete/trash icon
+import Navbar from "./navbar";
 interface TableRows {
     id: number;
     name: string;
@@ -16,8 +19,9 @@ const Table: React.FC = () => {
     const [tableData, setTableData] = useState<TableRows[]>([]);
     const [isModelOpen, setIsModelOpen] = useState(false);
     const [isEditModelOpen, setIsEditModelOpen] = useState(false);
-    const [editData, setEditData] = useState<TableRows | null>(null)
-
+    const [isDeleteModelOpen, setIsDeleteModelOpen] = useState(false);
+    const [editData, setEditData] = useState<TableRows | null>(null);
+    const [deleteData, setDeleteData] = useState<TableRows | null>(null);
 
     const fetchTableData = async () => {
         try {
@@ -36,18 +40,25 @@ const Table: React.FC = () => {
         setIsModelOpen(false);
     };
 
-
     const handleEditModelOpen = (row: TableRows) => {
-        setEditData(row)
+        setEditData(row);
         setIsEditModelOpen(true);
-    }
+    };
 
     const handleEditModelClose = () => {
-        setEditData(null)
+        setEditData(null);
         setIsEditModelOpen(false);
-    }
+    };
 
-   
+    const handleDeleteModelOpen = (row: TableRows) => {
+        setDeleteData(row);
+        setIsDeleteModelOpen(true);
+    };
+
+    const handleDeleteModelClose = () => {
+        setDeleteData(null);
+        setIsDeleteModelOpen(false);
+    };
 
     const handleSubmit = (data: { name: string; model: string; brand: string; year: number }) => {
         axios.post("/api/add", data)
@@ -71,77 +82,115 @@ const Table: React.FC = () => {
         }
     };
 
+    const handleDelete = async () => {
+        if (!deleteData) return;
+
+        try {
+            await axios.delete(`/api/delete/${deleteData.id}`);
+            setTableData((prev) =>
+                prev.filter((item) => item.id !== deleteData.id)
+            );
+            handleDeleteModelClose();
+        } catch (error) {
+            console.error("Error deleting data:", error);
+        }
+    };
+
     useEffect(() => {
         fetchTableData(); // Fetch initial table data
     }, []);
 
     return (
-        <div>
 
-            <h2 className="text-center mt-6 font-semibold text-xl text-red-500">Table Data</h2>
-            <div className="flex justify-center items-center bg-gray-100">
-                <Button onClick={handleModelOpen} />
+  <>
+  
+ <Navbar/>
+ 
+<div className="min-h-screen bg-gray-100 dark:bg-gray-900">
+    <h2 className="text-center mt-6 font-semibold text-2xl text-red-500 dark:text-red-400">Card Data</h2>
+    <div className="flex justify-center items-center mt-4">
+        <Button onClick={handleModelOpen}/>
+    </div>
 
+    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 p-6">
+        {tableData.map((row) => (
+            <div
+                key={row.id}
+                className="card bg-white shadow-lg rounded-xl p-6 dark:bg-gray-800 dark:text-white transition-transform hover:scale-105"
+            >
+                <div className="card-header flex justify-between items-center mb-4 border-b pb-2 border-gray-300 dark:border-gray-700">
+                    <h3 className="text-xl font-bold text-gray-700 dark:text-gray-200">ID: {row.id}</h3>
+                    <div className="actions flex space-x-4">
+                        <img
+                            src={edit}
+                            alt="Edit"
+                            onClick={() => handleEditModelOpen(row)}
+                            className="h-6 w-6 cursor-pointer hover:scale-110 transform transition"
+                        />
+                        <img
+                            src={trash}
+                            alt="Delete"
+                            onClick={() => handleDeleteModelOpen(row)}
+                            className="h-6 w-6 cursor-pointer hover:scale-110 transform transition"
+                        />
+                    </div>
+                </div>
+                <div className="card-body space-y-2">
+                    <p className="text-sm"><span className="font-semibold">Brand:</span> {row.brand}</p>
+                    <p className="text-sm"><span className="font-semibold">Name:</span> {row.name}</p>
+                    <p className="text-sm"><span className="font-semibold">Model:</span> {row.model}</p>
+                    <p className="text-sm"><span className="font-semibold">Year:</span> {row.year}</p>
+                </div>
             </div>
+        ))}
+    </div>
 
-            <div className="table-container relative overflow-x-auto shadow-md sm:rounded-lg mt-6 ml-7 mr-7 z-0">
-                <table className="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
-                    <thead className="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
-                        <tr>
-                            <th scope="col" className="px-6 py-3">ID</th>
-                            <th scope="col" className="px-6 py-3">Brand</th>
-                            <th scope="col" className="px-6 py-3">Name</th>
-                            <th scope="col" className="px-6 py-3">Model</th>
-                            <th scope="col" className="px-6 py-3">Year</th>
-                            <th scope="col" className="px-6 py-3">Action</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {tableData.map((row) => (
-                            <tr
-                                key={row.id}
-                                className="odd:bg-white odd:dark:bg-gray-900 even:bg-gray-50 even:dark:bg-gray-800 border-b dark:border-gray-700"
-                            >
-                                <th scope="row" className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
-                                    {row.id}
-                                </th>
-                                <td className="px-6 py-4">{row.brand}</td>
-                                <td className="px-6 py-4">{row.name}</td>
-                                <td className="px-6 py-4">{row.model}</td>
-                                <td className="px-6 py-4">{row.year}</td>
-                                <td className="px-6 py-4">
-                                    <button  className="font-medium text-blue-600 dark:text-blue-500 hover:underline" onClick={() => handleEditModelOpen(row)} >Edit</button>
-                                </td>
-                            </tr>
-                        ))}
-                    </tbody>
-                </table>
-                {/* edit */}
-                {isEditModelOpen && editData && (
-                    <EditModel
-                        isOpen={isEditModelOpen}
-                        onClose={handleEditModelClose}
-                        onSubmit={handleEditSubmit}
-                        initialData={editData}
-                    />
-                )}
-
-                {isModelOpen && (
-                    <>
-                        <div className="modal-backdrop"></div>
-                        <div className="model">
-                            <Model
-                                isOpen={isModelOpen}
-                                onClose={handleModelClose}
-                                onSubmit={handleSubmit}
-                                refreshTable={fetchTableData} // Pass refreshTable function
-                            />
-                        </div>
-                    </>
-                )}
-
+    {/* Edit Modal */}
+    {isEditModelOpen && editData && (
+        <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
+            <div className="bg-white dark:bg-gray-800 rounded-lg shadow-lg ">
+                <EditModel
+                    isOpen={isEditModelOpen}
+                    onClose={handleEditModelClose}
+                    onSubmit={handleEditSubmit}
+                    initialData={editData}
+                />
             </div>
         </div>
+    )}
+
+    {/* Add Modal */}
+    {isModelOpen && (
+        <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
+            <div className="bg-white dark:bg-gray-800 rounded-lg shadow-lg">
+                <Model
+                    isOpen={isModelOpen}
+                    onClose={handleModelClose}
+                    onSubmit={handleSubmit}
+                    refreshTable={fetchTableData}
+                />
+            </div>
+        </div>
+    )}
+
+    {/* Delete Modal */}
+    {isDeleteModelOpen && deleteData && (
+        <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
+            <div className="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6">
+                <DeleteModel
+                    isOpen={isDeleteModelOpen}
+                    onClose={handleDeleteModelClose}
+                    onConfirm={handleDelete}
+                    data={deleteData}
+                />
+            </div>
+        </div>
+    )}
+</div>
+</>
+
+ 
+
     );
 };
 
