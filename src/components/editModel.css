@@ -1,0 +1,7 @@
+.image-previews img {
+    width: 100px;
+    margin: 10px;
+    border: 2px solid #ccc;
+    border-radius: 5px;
+  }
+  

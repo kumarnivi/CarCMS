@@ -1,9 +1,8 @@
-import axios from "axios";
+import axios from 'axios';
 
-const API_BASE_URL  =  '/api';
+const api = axios.create({
+  baseURL: 'http://localhost:8080', 
+  withCredentials: true, // To send cookies with requests (e.g., JWT tokens)
+});
 
- export const fetchMessage =async ()  => {
-    const response = await axios.get(`${API_BASE_URL}`)
-    return response.data
-}
-
+export default api;

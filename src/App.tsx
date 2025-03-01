@@ -1,17 +1,13 @@
-import './App.css'
-import Table from './components/home'
+import './App.css';
+import User from './User';
 
 function App() {
-
   return (
     <>
-
-      <Table/>
-    
+     <User/>
     </>
-  )
+    
+  );
 }
 
 export default App;
-
-
