@@ -8,6 +8,7 @@ import edit from '../assets/edit.png';
 import trash from '../assets/trash.png'; // Assume you have a delete/trash icon
 import { toast, ToastContainer } from "react-toastify";
 import { Car, Tag, Calendar } from "lucide-react";
+import SerchResult from "../pages/SearchResults"
 
 
 interface TableRows {
@@ -161,61 +162,13 @@ const Table: React.FC = () => {
     return (
 
   <>
-
-
-{/* <div className="min-h-screen bg-gray-100 dark:bg-gray-900">
-    <div className="p-5 text-right">
-        <Button onClick={handleModelOpen}/>
-    </div> */}
-
-    {/* <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 p-6">
-        {tableData.map((row) => (
-            <div
-                key={row.id}
-                className="card bg-white shadow-lg rounded-xl p-6 dark:bg-gray-800 dark:text-white transition-transform hover:scale-105"
-            >
-                <div className="card-header flex justify-between items-center mb-4 border-b pb-2 border-gray-300 dark:border-gray-700">
-                    <h3 className="text-xl font-bold text-gray-700 dark:text-gray-200">ID: {row.id}</h3>
-                    <div className="actions flex space-x-4">
-                        <img
-                            src={edit}
-                            alt="Edit"
-                            onClick={() => handleEditModelOpen(row)}
-                            className="h-6 w-6 cursor-pointer hover:scale-110 transform transition"
-                        />
-                        <img
-                            src={trash}
-                            alt="Delete"
-                            onClick={() => handleDeleteModelOpen(row)}
-                            className="h-6 w-6 cursor-pointer hover:scale-110 transform transition"
-                        />
-                    </div>
-                </div>
-                <div className="card-body space-y-2">
-                    <p className="text-sm"><span className="font-semibold">Brand:</span> {row.brand}</p>
-                    <p className="text-sm"><span className="font-semibold">Name:</span> {row.name}</p>
-                    <p className="text-sm"><span className="font-semibold">Model:</span> {row.model}</p>
-                    <p className="text-sm"><span className="font-semibold">Year:</span> {row.year}</p>
-                    {row.image && row.image.length > 0 ? (
-    <div className="flex space-x-2">
-        {row.image.map((imgSrc, index) => (
-            <img key={index} className="w-32 h-32 object-cover" src={imgSrc} alt={`Car Image ${index + 1}`} />
-        ))}
-    </div>
-) : (
-    <p>No images available</p>
-)}
-
-
-
-                </div>
-            </div>
-        ))}
-    </div> */}
-
 <div className="min-h-screen bg-gray-100 dark:bg-gray-900">
     <div className="p-5 text-right">
         <Button onClick={handleModelOpen} />
+    </div>
+
+    <div>
+        <SerchResult/>
     </div>
 
     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 p-6 mt-8">

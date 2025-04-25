@@ -10,6 +10,7 @@ import Dashboard from './Admin/Dashboard';
 import Home from './components/home';
 import ResetPassword from './components/ResetPassword';
 import { GoogleOAuthProvider } from '@react-oauth/google';
+import SearchResult from './pages/SearchResults'
 
 function AppContent() {
   const location = useLocation();
@@ -25,6 +26,7 @@ function AppContent() {
         <Route path="/blog" element={<Blog />} />
         <Route path='/dashboard' element={<Dashboard />} />
         <Route path="/reset-password" element={<ResetPassword />} />
+        <Route path='/search' element={<SearchResult/>} />
       </Routes>
     </>
   );

@@ -5,10 +5,19 @@ import Login from "../PopUps/AuthPopup";
 import Register from "../PopUps/Register";
 import Cookies from "js-cookie";
 import api from '../API/api';
+import axios from "axios";
 
 const Navbar: React.FC = () => {
   const [openDropdown, setOpenDropdown] = useState<string | null>(null);
   const [isLoginOpen, setIsLoginOpen] = useState(false);
+
+  const [categories, setCategories] = useState<{ id: number; name: string }[]>([]);
+  const [locations, setLocations] = useState<string[]>([]);
+  const [vehicles, setVehicles] = useState<any[]>([]);
+  const [selectedCategory, setSelectedCategory] = useState<number | null>(null);
+  const [searchQuery, setSearchQuery] = useState({ location: "" });
+  const [showDropdown, setShowDropdown] = useState(false);
+  const [filteredLocations, setFilteredLocations] = useState<string[]>([]);
  
   const navigate = useNavigate();
 
@@ -20,6 +29,74 @@ const Navbar: React.FC = () => {
     if (token) {  }
   }, [token]);
 
+
+  // Fetch categories on component mount
+  useEffect(() => {
+    const fetchCategories = async () => {
+      try {
+        const res = await axios.get("http://localhost:8080/getCategory");
+        setCategories(res.data);
+      } catch (error) {
+        console.error("Error fetching categories", error);
+      }
+    };
+    fetchCategories();
+  }, []);
+
+  // Fetch locations when a category is selected
+  const handleCategoryChange = async (e: React.ChangeEvent<HTMLSelectElement>) => {
+    const categoryId = Number(e.target.value);
+    setSelectedCategory(categoryId);
+    setSearchQuery({ location: "" });
+    setVehicles([]); // Clear previous vehicle results
+
+    if (!categoryId) return;
+
+    try {
+      const res = await axios.get(`http://localhost:8080/search?category_id=${categoryId}`);
+      setLocations(res.data);
+    } catch (error) {
+      console.error("Error fetching locations", error);
+    }
+  };
+
+  // Handle location search input
+  const handleLocationChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const query = e.target.value;
+    setSearchQuery({ location: query });
+  
+    console.log("Locations Data:", locations); // Debugging
+  
+    if (query.length > 0) {
+      const filtered = locations
+        ?.filter((loc) => loc.toLowerCase().includes(query.toLowerCase())) || [];
+  
+      setFilteredLocations(filtered);
+      setShowDropdown(true);
+    } else {
+      setShowDropdown(false);
+    }
+  };
+
+  // Fetch vehicles when a location is selected
+  const handleLocationSelect = async (location: string) => {
+    if (!selectedCategory) {
+      alert("Please select a category first.");
+      return;
+    }
+
+    setSearchQuery({ location });
+    setShowDropdown(false);
+
+    try {
+      const res = await axios.get(
+        `http://localhost:8080/search?category_id=${selectedCategory}&location=${location}`
+      );
+      setVehicles(res.data);
+    } catch (error) {
+      console.error("Error fetching vehicles", error);
+    }
+  };
  
   const handleAuthClick = async () => {
     if (isAuthenticated) {

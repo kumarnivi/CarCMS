@@ -14,7 +14,7 @@ interface PopupProps {
 const LoginRegisterPopup: React.FC<PopupProps> = ({ onClose }) => {
   const [isLogin, setIsLogin] = useState(true);
   const navigate = useNavigate();
-  const { setIsAuthenticated, setToken } = useAuth();
+  const { setIsAuthenticated, setToken, setUserId } = useAuth();
   const [error, setError] = useState('');
 
   const [credentials, setCredentials] = useState({
@@ -84,12 +84,14 @@ const LoginRegisterPopup: React.FC<PopupProps> = ({ onClose }) => {
 
       console.log('Login Successful:', response.data.user);
       Cookies.set('token', response.data.token, { expires: 1 });
+      Cookies.set('userid', response.data.id,  { expires:1 })
       setToken(response.data.token);
+      setUserId(response.data.id)
       setIsAuthenticated(true);
       toast.success('Login Successfully');
 
       if (response.data.user === 'admin') {
-        navigate('/dashboard');
+        navigate('/dashboard'); 
       } else {
         navigate('/');
       }
