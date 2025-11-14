@@ -40,7 +40,7 @@ const Register = () => {
     }
 
     try{
-        await api.post('auth/register', form, {
+        await api.post('auth', form, {
             headers:{"Content-Type": "multipart/form-data"}
         })
         toast.success("Registerd Successfully");
@@ -114,4 +114,7 @@ const Register = () => {
    )
 }
 
-export default Register
+
+export default Register;
+
+

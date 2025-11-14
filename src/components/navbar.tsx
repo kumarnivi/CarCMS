@@ -128,7 +128,7 @@ const Navbar: React.FC = () => {
 
   return (
     <>
-      <nav className="bg-white border-b border-gray-200 dark:bg-gray-900 dark:border-gray-700 shadow-md fixed w-full z-50">
+      <nav className="bg-gradient-to-r from-[#400E54] to-[#1E6EE6] shadow-md fixed w-full z-50">
         <div className="max-w-screen-xl mx-auto flex items-center justify-between p-4">
           <Link to="/" className="text-2xl font-bold text-blue-600">
             BrandLogo
@@ -200,3 +200,10 @@ const Navbar: React.FC = () => {
 };
 
 export default Navbar;
+
+
+
+
+
+
+

@@ -175,7 +175,7 @@ const Table: React.FC = () => {
     {tableData.map((row) => (
         <div
             key={row.id}
-            className="bg-white shadow-lg rounded-2xl overflow-hidden dark:bg-gray-800 dark:text-white transform transition-transform hover:scale-105 hover:shadow-2xl"
+            className="bg-white shadow-lg rounded-2xl overflow-hidden dark:bg-gray-800 dark:text-[#000] transform transition-transform hover:scale-105 hover:shadow-2xl"
             style={{ height: '450px' }}
         >
             <div className="relative h-2/4 overflow-hidden">
